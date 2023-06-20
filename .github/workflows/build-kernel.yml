@@ -1,4 +1,4 @@
-name: Build Kernel
+name: Build LineageOS 20 Kernel (KernelSU)
 on:
   watch:
     types: [started]
