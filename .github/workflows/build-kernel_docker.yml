@@ -1,4 +1,4 @@
-name: Build Kernel with docker
+name: Build LineageOS 20 Kernel (KernelSU docker)
 on:
   watch:
     types: [started]
