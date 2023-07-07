@@ -1,0 +1,13 @@
+{
+  "kernel": {
+    "date": "2023-06-06",
+    "sha1": "7e2b4a998df4164bfe6fa65a992886695d6c8d0f",
+    "name": "KernelSU_Docker",
+    "link": "https://github.com/Nobooooody/KernelSU_Action/releases/latest/download/KernelSU_Docker.img",
+    "changelog_url": "https://github.com/Nobooooody/KernelSU_Action/releases/latest/download/changelog.txt",
+    "version": "3"
+  },
+  "support": {
+    "link": "https://github.com/Nobooooody/KernelSU_Action"
+  }
+}
