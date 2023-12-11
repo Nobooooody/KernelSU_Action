@@ -200,7 +200,9 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
         echo "------------ Patches for Remove Kernel Validation ------------------------------------------"
-        scripts/config --file arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }} -e CONFIG_MODULE_FORCE_LOAD -d CONFIG_MODULE_SIG_FORCE -d CONFIG_MODVERSIONS
+        scripts/config --file arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }} -e CONFIG_MODULE_FORCE_LOAD -d CONFIG_MODULE_SIG_FORCE
+        #https://blog.xzr.moe/archives/236/ 
+        #disable CONFIG_MODVERSIONS is useless
 
     - name: Remove Warning
       if: env.Remove_Warning == 'true'
