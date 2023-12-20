@@ -196,8 +196,8 @@ jobs:
 
         echo "------------ Patches for lxc and docker ----------------------------------------------------"
         patch -p1 < kernel_patches/patches/${{ env.Kernel_Version }}/cgroup.patch
-        # patch -p1 < kernel_patches/patches/${{ env.Kernel_Version }}/xt_qtaguid.patch 
-        #
+        patch -p1 < kernel_patches/patches/${{ env.Kernel_Version }}/xt_qtaguid.patch
+
         echo "------------ Remove ANDROID_PARANOID_NETWORK -----------------------------------------------"
         scripts/config --file arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }} -d ANDROID_PARANOID_NETWORK
 
@@ -241,13 +241,13 @@ jobs:
         # find arch/${{ env.ARCH }}/configs/ -type f -name "*_defconfig" -exec sh -c 'export defconfig_path={} && sed "s@<device_defconfig>@$defconfig_path@g" kernel_patches/patches/${{ env.Kernel_Version }}/general_defconfig.patch | patch -p1 ' \;
         scripts/config --file arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }} -e CONFIG_MODULE_FORCE_LOAD
         scripts/config --file arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }} -d CONFIG_MODULE_SIG_FORCE
-        patch -p1 < kernel_patches/patches/module.patch
+        patch -p1 < kernel_patches/patches/${{ env.Kernel_Version }}/module.patch
 
         echo "------------ Patches for remove warning ----------------------------------------------------"
         patch -p1 < kernel_patches/patches/${{ env.Kernel_Version }}/nowarnings.patch
 
         echo "------------ Patches for lxc and docker ----------------------------------------------------"
-        patch -p1 < kernel_patches/patches/${{ env.Kernel_Version }}/cgroup.patch && patch -p1 < kernel_patches/patches/xt_qtaguid.patch 
+        patch -p1 < kernel_patches/patches/${{ env.Kernel_Version }}/cgroup.patch && patch -p1 < kernel_patches/patches/${{ env.Kernel_Version }}/xt_qtaguid.patch
 
         echo "------------ Remove ANDROID_PARANOID_NETWORK -----------------------------------------------"
         scripts/config --file arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }} -d ANDROID_PARANOID_NETWORK
