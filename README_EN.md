@@ -2,7 +2,7 @@
 
 This action is for Non-GKI Kernels and has some universality and requires knowledge of the kernel and Android.
 
-## Warning:warning::warning::warning:
+## Warning :warning::warning::warning:
 
 If you are not the author of the Kernel, and are using someone else's labor to build KernelSU, please use it for personal use only and do not share it with others. This is to show respect for the author's labor achievements.
 
@@ -84,12 +84,12 @@ Enter the Clang version to use.
 
 | Clang Version | Corresponding Android Version | AOSP-Clang Version |
 | ------------- | ----------------------------- | ------------------ |
-| 12.0.5 | Android S | r416183b |
-| 14.0.6 | Android T | r450784d |
-| 14.0.7 |               | r450784e |
-| 15.0.1 |               | r458507 |
-| 17.0.1 |               | r487747b |
-| 17.0.2 | Android U | r487747c |
+| 12.0.5        | Android S                     | r416183b           |
+| 14.0.6        | Android T                     | r450784d           |
+| 14.0.7        |                               | r450784e           |
+| 15.0.1        |                               | r458507            |
+| 17.0.1        |                               | r487747b           |
+| 17.0.2        | Android U                     | r487747c           |
 
 Generally, Clang12 can compile most of the 4.14 and above kernels. My MI 6X 4.19 uses r450784d.
 
@@ -142,6 +142,33 @@ Inject parameters into the defconfig automatically.
 ### Add overlayfs Config
 
 This parameter provides support for the KernelSU module and system partition read and write. Inject parameters into Defconfig automatically.
+
+### Apply KernelSU Patch
+
+If kprobe does not work in your kernel (may be an upstream or kernel bug below 4.8), then you can try enabling this parameter
+
+Automatically modify kernel source code to support KernelSU  
+See also: [Intergrate for non-GKI devices](https://kernelsu.org/guide/how-to-integrate-for-non-gki.html#manually-modify-the-kernel-source)
+
+### Remove unused packages
+
+To clean unnecessary packages and free up more disk space.If you need these packages, please disable this option.
+
+### AnyKernel3
+
+#### Use custom AnyKernel3
+
+Can use custom AnyKernel3
+
+#### Custom AnyKernel3 Source
+
+> If it is a git repository, please fill in the link containing `.git`
+
+Supports direct links to git repositories or zip compressed packages
+
+#### AnyKernel3 Branch
+
+Customize the warehouse branch of AnyKernel3
 
 ### Enable ccache
 
