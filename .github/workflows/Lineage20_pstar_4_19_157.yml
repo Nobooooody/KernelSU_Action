@@ -233,6 +233,59 @@ jobs:
         patch -p1 < kernel_patches/patches/${{ env.Kernel_Extra_Version }}/cgroup.patch
         patch -p1 < kernel_patches/patches/${{ env.Kernel_Extra_Version }}/xt_qtaguid.patch
 
+        echo "------------ Add Kernel Config required by lxc and docker ----------------------------------"
+        # https://github.com/AndroidAppsUsedByMyself/android_kernel_motorola_sm8250/blob/backups/20240102-2249/0warning0error_lineage-20/arch/arm64/configs/vendor/lineageos_pstar_lxc_docker_defconfig
+        echo "------------ Generally Necessary Docker Configs --------------------------------------------"
+        scripts/config --file arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }} \
+        -e CONFIG_CGROUP_SCHED \
+        -e CONFIG_RT_GROUP_SCHED \
+        -e CONFIG_CPUSETS \
+        -e CONFIG_BLK_CGROUP \
+        -e CONFIG_DEBUG_BLK_CGROUP \
+        -e CONFIG_MEMCG \
+        -e CONFIG_MEMCG_SWAP \
+        -e CONFIG_CGROUP_PIDS \
+        -e CONFIG_PID_NS \
+        -e CONFIG_IPC_NS \
+        -e CONFIG_CGROUP_DEVICE \
+        -e CONFIG_BRIDGE_NETFILTER \
+        -e CONFIG_NETFILTER_XT_MATCH_ADDRTYPE \
+        -e CONFIG_IP_VS \
+        -e CONFIG_NETFILTER_XT_MATCH_IPVS \
+        -e CONFIG_POSIX_MQUEUE
+
+        echo "------------ Optional Features Docker Configs ----------------------------------------------"
+        scripts/config --file arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }} \
+        -e CONFIG_USER_NS \
+        -e CONFIG_CGROUP_PIDS \
+        -e CONFIG_BLK_DEV_THROTTLING \
+        -e CONFIG_CGROUP_PERF \
+        -e CONFIG_HUGETLB_PAGE \
+        -e CONFIG_CGROUP_HUGETLB \
+        -e CONFIG_NET_CLS_CGROUP \
+        -e CONFIG_CGROUP_NET_PRIO \
+        -e CONFIG_FAIR_GROUP_SCHED \
+        -e CONFIG_CFS_BANDWIDTH \
+        -e CONFIG_IP_VS_NFCT \
+        -e CONFIG_IP_VS_PROTO_TCP \
+        -e CONFIG_IP_VS_PROTO_UDP \
+        -e CONFIG_IP_VS_RR \
+        -e CONFIG_VXLAN \
+        -e CONFIG_MACVLAN \
+        -e CONFIG_BTRFS_FS \
+        -e CONFIG_BTRFS_FS_POSIX_ACL \
+        -e CONFIG_DM_THIN_PROVISIONING \
+        -e CONFIG_CGROUP_RDMA \
+        -e CONFIG_NF_NAT_IPV6 \
+        -e CONFIG_IP6_NF_NAT \
+        -e CONFIG_IP6_NF_TARGET_MASQUERADE \
+        -e CONFIG_NETFILTER_XT_TARGET_CHECKSUM \
+        -e CONFIG_CHECKPOINT_RESTORE \
+        -e CONFIG_FHANDLE \
+        -e CONFIG_UNIX_DIAG \
+        -e CONFIG_PACKET_DIAG \
+        -e CONFIG_NETLINK_DIAG
+
     - name: Apply patches for kali nethunter
       if: env.Add_Kali_Nethunter_Patches == 'true'
       run: |
