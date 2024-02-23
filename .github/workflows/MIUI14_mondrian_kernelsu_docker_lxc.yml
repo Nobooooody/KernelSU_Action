@@ -1,5 +1,6 @@
 name: (mondrian) (MIUI 14) (KernelSU docker lxc) Build Kernel
 on:
+  push:
   watch:
     types: [started]
   schedule:
