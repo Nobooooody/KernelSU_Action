@@ -232,7 +232,7 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
         echo "------------ Patches for remove warning ----------------------------------------------------"
-        patch -p1 < kernel_patches/patches/${{ env.Kernel_Version }}/nowarnings.patch
+        # patch -p1 < kernel_patches/patches/${{ env.Kernel_Version }}/nowarnings.patch
         scripts/config --file arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }} -d CONFIG_CC_WERROR -e CONFIG_SECTION_MISMATCH_WARN_ONLY --set-val CONFIG_FRAME_WARN 4096 
 
     - name: Apply All Patches
