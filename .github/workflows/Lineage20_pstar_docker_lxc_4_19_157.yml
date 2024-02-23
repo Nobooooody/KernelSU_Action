@@ -1,5 +1,6 @@
 name: (pstar) (LineageOS 20) (4.19.157) (docker lxc) Build Kernel
 on:
+  push:
   watch:
     types: [started]
   schedule:

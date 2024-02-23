@@ -1,5 +1,6 @@
 name: (pstar) (LineageOS 19.1) (KernelSU) Build Kernel
 on:
+  push:
   watch:
     types: [started]
   schedule:
