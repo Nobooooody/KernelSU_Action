@@ -450,6 +450,13 @@ jobs:
         #https://blog.xzr.moe/archives/236/
         #disable CONFIG_MODVERSIONS is useless
 
+    - name: Backport path_umount
+      if: env.Backport_path_umount == 'true'
+      run: |
+        cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
+        echo "------------ Patches for backport path_umount ----------------------------------------------------"
+        patch -p1 < kernel_patches/patches/${{ env.Kernel_Extra_Version }}/path_umount_backport.patch
+
     - name: Remove Warning
       if: env.Remove_Warning == 'true'
       run: |
