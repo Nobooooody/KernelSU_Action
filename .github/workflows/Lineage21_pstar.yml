@@ -64,6 +64,7 @@ jobs:
             Kernel_Version
             Kernel_Extra_Version
             Remove_Kernel_Validation
+            Backport_path_umount
             Remove_Warning
             Docker_LXC_Patches
             Remove_ANDROID_PARANOID_NETWORK
