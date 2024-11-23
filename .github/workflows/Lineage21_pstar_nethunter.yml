@@ -663,15 +663,15 @@ jobs:
           ./telegram-bot-api-binary --api-id=${{ secrets.TG_API_ID }} --api-hash=${{ secrets.TG_API_HASH }} --local 2>&1 > /dev/null & 
 
           export Artifacts1=$(find artifacts -name "AnyKernel3-KernelSU-lineageos_pstar-*")
-          curl -v "http://127.0.0.1:8081/bot${{ secrets.TG_BOT_TOKEN  }}/sendMediaGroup?disable_notification=true&chat_id=-1001944734677&media=%5B%7B%22type%22%3A%22document%22%2C%20%22media%22%3A%22attach%3A%2F%2FArtifacts1%22%2C%22caption%22:${ESCAPED}%7D%5D" \
+          curl -v "http://127.0.0.1:8081/bot${{ secrets.TG_BOT_TOKEN  }}/sendMediaGroup?disable_notification=true&chat_id=${{ secrets.CHAT_ID }}&media=%5B%7B%22type%22%3A%22document%22%2C%20%22media%22%3A%22attach%3A%2F%2FArtifacts1%22%2C%22caption%22:${ESCAPED}%7D%5D" \
             -F Artifacts1="@$Artifacts1"
 
           export Artifacts2=$(find artifacts -name "Image-KernelSU-lineageos_pstar-*")
-          curl -v "http://127.0.0.1:8081/bot${{ secrets.TG_BOT_TOKEN  }}/sendMediaGroup?disable_notification=true&chat_id=-1001944734677&media=%5B%7B%22type%22%3A%22document%22%2C%20%22media%22%3A%22attach%3A%2F%2FArtifacts2%22%2C%22caption%22:${ESCAPED}%7D%5D" \
+          curl -v "http://127.0.0.1:8081/bot${{ secrets.TG_BOT_TOKEN  }}/sendMediaGroup?disable_notification=true&chat_id=${{ secrets.CHAT_ID }}&media=%5B%7B%22type%22%3A%22document%22%2C%20%22media%22%3A%22attach%3A%2F%2FArtifacts2%22%2C%22caption%22:${ESCAPED}%7D%5D" \
             -F Artifacts2="@$Artifacts2"
 
           export Artifacts3=$(find artifacts -name "boot-KernelSU-lineageos_pstar-*")
-          curl -v "http://127.0.0.1:8081/bot${{ secrets.TG_BOT_TOKEN  }}/sendMediaGroup?disable_notification=true&chat_id=-1001944734677&media=%5B%7B%22type%22%3A%22document%22%2C%20%22media%22%3A%22attach%3A%2F%2FArtifacts3%22%2C%22caption%22:${ESCAPED}%7D%5D" \
+          curl -v "http://127.0.0.1:8081/bot${{ secrets.TG_BOT_TOKEN  }}/sendMediaGroup?disable_notification=true&chat_id=${{ secrets.CHAT_ID }}&media=%5B%7B%22type%22%3A%22document%22%2C%20%22media%22%3A%22attach%3A%2F%2FArtifacts3%22%2C%22caption%22:${ESCAPED}%7D%5D" \
             -F Artifacts3="@$Artifacts3"
 
           pkill telegram-bot
