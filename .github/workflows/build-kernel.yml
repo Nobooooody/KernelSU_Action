@@ -1,6 +1,5 @@
 name: Build Kernel
 on:
-  push:
   watch:
     types: [started]
   schedule:
