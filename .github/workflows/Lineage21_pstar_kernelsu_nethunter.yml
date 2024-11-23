@@ -1,4 +1,4 @@
-name: (pstar) (LineageOS 21) (KernelSU nethunter) Build Kernel
+name: (pstar) (LineageOS 21) (kernelsu nethunter) Build Kernel
 on:
   push:
   watch:
