@@ -638,7 +638,7 @@ jobs:
 
   upload-to-telegram:
     name: Upload Telegram
-    if: ${{ success() && github.ref == 'refs/heads/main' }}
+    if: ${{ success() }}
     runs-on: ubuntu-latest
     needs:
       - build
