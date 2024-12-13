@@ -217,6 +217,7 @@ jobs:
         echo "------------ Download Patches --------------------------------------------------------------"
         git clone https://github.com/AndroidAppsUsedByMyself/kernel_patches.git --depth=1
         git clone https://gitlab.com/simonpunk/susfs4ksu.git -b kernel-${{ env.Kernel_Version }} --depth=1
+        (cd susfs4ksu && git checkout 5cdeec5fc1cc521c9499898a4d5fe91f1dc5749b)
 
     - name: Import Docker Config
       if: env.IMPORT_DOCKER == 'true'
