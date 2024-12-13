@@ -499,6 +499,7 @@ jobs:
     - name: Setup susfs4ksu workaround
       if: env.ENABLE_susfs4ksu == 'true' && env.APPLY_KSU_PATCH == 'true'
       run: |
+        cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
         scripts/config --file arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }} \
         -d CONFIG_KSU_SUSFS_SUS_SU
 
