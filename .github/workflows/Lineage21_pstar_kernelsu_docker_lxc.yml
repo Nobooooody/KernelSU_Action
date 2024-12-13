@@ -44,6 +44,7 @@ jobs:
             CUSTOM_GCC_32_BRANCH
             CUSTOM_GCC_32_BIN
             ENABLE_KERNELSU
+            ENABLE_susfs4ksu
             KERNELSU_TAG
             ADD_KPROBES_CONFIG
             DISABLE-LTO
@@ -215,6 +216,7 @@ jobs:
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
         echo "------------ Download Patches --------------------------------------------------------------"
         git clone https://github.com/AndroidAppsUsedByMyself/kernel_patches.git --depth=1
+        git clone https://gitlab.com/simonpunk/susfs4ksu.git -b kernel-4.19 --depth=1
 
     - name: Import Docker Config
       if: env.IMPORT_DOCKER == 'true'
@@ -483,6 +485,22 @@ jobs:
         curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s ${{ env.KERNELSU_TAG }}
         KSU_VERSION=$(cd KernelSU && expr $(/usr/bin/git rev-list --count HEAD) + 10200)
         echo "UPLOADNAME=-KernelSU_$KSU_VERSION" >> $GITHUB_ENV
+
+    - name: Setup susfs4ksu
+      if: env.ENABLE_susfs4ksu == 'true'
+      run: |
+        cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
+        patch -p1 < $GITHUB_WORKSPACE/kernel_workspace/android-kernel/susfs4ksu/kernel_patches/50_add_susfs_in_kernel.patch
+        cd $GITHUB_WORKSPACE/kernel_workspace/KernelSU
+        patch -p1 < $GITHUB_WORKSPACE/kernel_workspace/android-kernel/susfs4ksu/KernelSU/10_enable_susfs_for_ksu.patch
+        cp $GITHUB_WORKSPACE/kernel_workspace/android-kernel/susfs4ksu/kernel_patches/fs/susfs.c $GITHUB_WORKSPACE/kernel_workspace/android-kernel/fs/
+        cp $GITHUB_WORKSPACE/kernel_workspace/android-kernel/susfs4ksu/kernel_patches/include/linux/susfs.h $GITHUB_WORKSPACE/kernel_workspace/android-kernel/include/linux/
+
+    - name: Setup susfs4ksu workaround
+      if: env.ENABLE_susfs4ksu == 'true' && env.APPLY_KSU_PATCH == 'true'
+      run: |
+        scripts/config --file arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }} \
+        -d CONFIG_KSU_SUSFS_SUS_SU
 
     - name: Setup Configuration for Kernel
       run: |
