@@ -9,7 +9,7 @@ on:
 jobs:
   build:
     name: Build Kernel by ${{ github.actor }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     env:
       CCACHE_COMPILERCHECK: "%compiler% -dumpmachine; %compiler% -dumpversion"
       CCACHE_NOHASHDIR: "true"
@@ -662,7 +662,7 @@ jobs:
   upload-to-telegram:
     name: Upload Telegram
     if: ${{ success() }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs:
       - build
       - telegram-bot-api
@@ -701,7 +701,7 @@ jobs:
 
   telegram-bot-api:
     name: Telegram Bot API
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
