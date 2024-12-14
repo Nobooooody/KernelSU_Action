@@ -45,6 +45,7 @@ jobs:
             CUSTOM_GCC_32_BIN
             ENABLE_KERNELSU
             ENABLE_susfs4ksu
+            KERNELSU_URL
             KERNELSU_TAG
             ADD_KPROBES_CONFIG
             DISABLE-LTO
@@ -483,7 +484,7 @@ jobs:
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
         rm -rf KernelSU drivers/kernelsu
-        curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s ${{ env.KERNELSU_TAG }}
+        curl -LSs "https://raw.githubusercontent.com/${{ env.KERNELSU_URL }}/main/kernel/setup.sh" | bash -s ${{ env.KERNELSU_TAG }}
         KSU_VERSION=$(cd KernelSU && expr $(/usr/bin/git rev-list --count HEAD) + 10200)
         echo "UPLOADNAME=-KernelSU_$KSU_VERSION" >> $GITHUB_ENV
 
