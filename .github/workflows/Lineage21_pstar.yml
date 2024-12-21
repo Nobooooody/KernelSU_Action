@@ -588,6 +588,14 @@ jobs:
                exit 1
            fi
        fi
+       if [ ${{ env.ENABLE_KERNELSU }} = true && ${{ env.KERNELSU_LKM }} = true ]; then
+           if [ -f kernel_workspace/android-kernel/out/drivers/kernelsu/kernelsu.ko ]; then
+               echo "CHECK_KERNELSU_LKM_IS_OK=true" >> $GITHUB_ENV
+           else
+               echo "KernelSU LKM is empty"
+               exit 1
+           fi
+       fi
 
     - name: Make Anykernel3
       if: env.CHECK_FILE_IS_OK == 'true' && env.USE_CUSTOM_ANYKERNEL3 != 'true'
@@ -669,6 +677,7 @@ jobs:
         path: kernel_workspace/boot.img
 
     - name: Upload KernelSU lkm
+      if: env.CHECK_KERNELSU_LKM_IS_OK == 'true'
       uses: actions/upload-artifact@main
       with:
         name: kernel
