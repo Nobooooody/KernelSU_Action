@@ -676,6 +676,14 @@ jobs:
         name: boot${{ env.LOCALVERSION }}${{ env.UPLOADNAME }}-${{ env.DEVICE }}-${{ env.BUILD_TIME }}
         path: kernel_workspace/boot.img
 
+    - name: Upload Kernel defconfig
+      if: env.CHECK_KERNELSU_LKM_IS_OK == 'true'
+      uses: actions/upload-artifact@main
+      with:
+        name: kernel
+        path: |
+          kernel_workspace/android-kernel/arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}
+
     - name: Upload KernelSU lkm
       if: env.CHECK_KERNELSU_LKM_IS_OK == 'true'
       uses: actions/upload-artifact@main
