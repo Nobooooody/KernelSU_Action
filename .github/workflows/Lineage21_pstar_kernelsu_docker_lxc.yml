@@ -61,6 +61,7 @@ jobs:
             SOURCE_BOOT_IMAGE
             KSU_EXPECTED_SIZE
             KSU_EXPECTED_HASH
+            KERNELSU_LKM
             REMOVE_UNUSED_PACKAGES
             IMPORT_DOCKER
             Kernel_Version
@@ -489,7 +490,7 @@ jobs:
         echo "UPLOADNAME=-KernelSU_$KSU_VERSION" >> $GITHUB_ENV
 
     - name: Setup susfs4ksu
-      if: env.ENABLE_susfs4ksu == 'true'
+      if: env.ENABLE_susfs4ksu == 'true' && env.KERNELSU_LKM != 'true'
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
         patch -p1 < $GITHUB_WORKSPACE/kernel_workspace/android-kernel/kernel_patches/patches/${{ env.Kernel_Extra_Version }}/50_add_susfs_in_kernel-${{ env.Kernel_Version }}.patch
@@ -499,7 +500,7 @@ jobs:
         cp $GITHUB_WORKSPACE/kernel_workspace/android-kernel/susfs4ksu/kernel_patches/include/linux/susfs.h $GITHUB_WORKSPACE/kernel_workspace/android-kernel/include/linux/
 
     - name: Setup susfs4ksu workaround
-      if: env.ENABLE_susfs4ksu == 'true' && env.APPLY_KSU_PATCH == 'true'
+      if: env.ENABLE_susfs4ksu == 'true' && env.APPLY_KSU_PATCH == 'true' && env.KERNELSU_LKM != 'true'
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
         scripts/config --file arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }} \
@@ -537,6 +538,14 @@ jobs:
         if [ ${{ env.DISABLE_CC_WERROR }} = true ]; then
             echo "CONFIG_CC_WERROR=n" >> arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}
         fi
+
+    - name: Patch KernelSU and Kernel for lkm mode
+      if: env.ENABLE_KERNELSU == 'true' && env.KERNELSU_LKM == 'true'
+      run: |
+        cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
+        sed -i '/config KSU/,/help/{s/default y/default m/}' drivers/kernelsu/Kconfig
+        scripts/config --file arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }} \
+        -m CONFIG_KSU
 
     - name: Setup ccache
       if: env.ENABLE_CCACHE == 'true'
