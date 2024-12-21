@@ -685,7 +685,6 @@ jobs:
         path: kernel_workspace/boot.img
 
     - name: Upload Kernel defconfig
-      if: env.CHECK_KERNELSU_LKM_IS_OK == 'true'
       uses: actions/upload-artifact@main
       with:
         name: kernel
