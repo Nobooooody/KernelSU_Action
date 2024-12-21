@@ -545,6 +545,8 @@ jobs:
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
         sed -i '/config KSU/,/help/{s/default y/default m/}' drivers/kernelsu/Kconfig
         cat KernelSU*/kernel/export_symbol.txt | awk '{sub("[ \t]+","");print "  "$0}' >> android/abi_gki_aarch64
+        ast-grep -U -p '$$$ check_exports($$$) {$$$}' -r '' scripts/mod/modpost.c
+        ast-grep -U -p 'check_exports($$$);' -r '' scripts/mod/modpost.c
         scripts/config --file arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }} \
         -m CONFIG_KSU
 
