@@ -668,6 +668,13 @@ jobs:
         name: boot${{ env.LOCALVERSION }}${{ env.UPLOADNAME }}-${{ env.DEVICE }}-${{ env.BUILD_TIME }}
         path: kernel_workspace/boot.img
 
+    - name: Upload KernelSU lkm
+      uses: actions/upload-artifact@main
+      with:
+        name: kernel
+        path: |
+          kernel_workspace/android-kernel/out/drivers/kernelsu/kernelsu.ko
+
   upload-to-telegram:
     name: Upload Telegram
     if: ${{ success() }}
