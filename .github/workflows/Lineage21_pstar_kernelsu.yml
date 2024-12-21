@@ -544,6 +544,10 @@ jobs:
       if: env.ENABLE_KERNELSU == 'true' && env.KERNELSU_LKM == 'true'
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
+        patch -p1 < kernel_patches/patches/${{ env.Kernel_Extra_Version }}/export_symbol_for_kernelsu_lkm.patch
+        if [ ${{ env.Backport_path_umount }} = true ]; then
+            patch -p1 < kernel_patches/patches/${{ env.Kernel_Extra_Version }}/export_path_umount_symbol_for_kernelsu_lkm.patch
+        fi
         sed -i '/config KSU/,/help/{s/default y/default m/}' drivers/kernelsu/Kconfig
         cat KernelSU*/kernel/export_symbol.txt | awk '{sub("[ \t]+","");print "  "$0}' >> android/abi_gki_aarch64
         ast-grep -U -p '$$$ check_exports($$$) {$$$}' -r '' scripts/mod/modpost.c
