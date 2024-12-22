@@ -597,7 +597,7 @@ jobs:
            fi
        fi
        if [ ${{ env.ENABLE_KERNELSU }} = true && ${{ env.KERNELSU_LKM }} = true ]; then
-           if [ -f kernel_workspace/android-kernel/out/drivers/kernelsu/kernelsu.ko ]; then
+           if [ -f android-kernel/out/drivers/kernelsu/kernelsu.ko ]; then
                echo "CHECK_KERNELSU_LKM_IS_OK=true" >> $GITHUB_ENV
            else
                echo "KernelSU LKM is empty"
@@ -687,7 +687,7 @@ jobs:
     - name: Upload Kernel defconfig
       uses: actions/upload-artifact@main
       with:
-        name: kernel
+        name: defconfig
         path: |
           kernel_workspace/android-kernel/arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}
 
@@ -696,13 +696,13 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: Drivers${{ env.LOCALVERSION }}${{ env.UPLOADNAME }}-${{ env.DEVICE }}-${{ env.BUILD_TIME }}
-        path: kernel_workspace/android-kernel/out/drivers/*
+        path: kernel_workspace/android-kernel/out/drivers/**/*.ko
 
     - name: Upload KernelSU lkm
       if: env.CHECK_KERNELSU_LKM_IS_OK == 'true'
       uses: actions/upload-artifact@main
       with:
-        name: kernel
+        name: KernelSU${{ env.LOCALVERSION }}${{ env.UPLOADNAME }}-${{ env.DEVICE }}-${{ env.BUILD_TIME }}
         path: |
           kernel_workspace/android-kernel/out/drivers/kernelsu/kernelsu.ko
 
