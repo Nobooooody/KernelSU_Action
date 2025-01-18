@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 if [ -z "$kernel_source_dir" ] || [ -z "$target_config" ] || [ -z "$support_config_file" ]; then
     echo "Error: Environment variables kernel_source_dir, target_config or support_config_file are not set."
@@ -26,7 +26,9 @@ case $action in
             "$kernel_source_dir/scripts/config" --file "$target_config" -e "$config_option_with_prefix"
         else
             echo "Error: $config_option or$config_option_with_prefix is not supported."
-            exit 1
+            if [ -z "$IGNORE_ERRORS" ]; then
+                exit 1
+            fi
         fi
         ;;
     -d)
