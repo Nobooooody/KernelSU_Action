@@ -214,6 +214,7 @@ jobs:
         echo "kernel_source_dir=$GITHUB_WORKSPACE/kernel_workspace/android-kernel" >> $GITHUB_ENV
         echo "target_config=$GITHUB_WORKSPACE/kernel_workspace/android-kernel/arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}" >> $GITHUB_ENV
         echo "support_config_file=$GITHUB_WORKSPACE/SupportedConfig_Lineage21_pstar" >> $GITHUB_ENV
+        echo "IGNORE_ERRORS=true" >> $GITHUB_ENV
 
     - name: Generate Kernel Build Config
       if: env.Generate_Build_Config == 'true'
