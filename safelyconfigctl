@@ -25,7 +25,7 @@ case $action in
         if grep -qE "^(CONFIG_)?$config_option=" "$support_config_file"; then
             "$kernel_source_dir/scripts/config" --file "$target_config" -e "$config_option_with_prefix"
         else
-            echo "Error: $config_option or$config_option_with_prefix is not supported."
+            echo "Error: $config_option or $config_option_with_prefix is not supported."
             if [ -z "$IGNORE_ERRORS" ]; then
                 exit 1
             fi
