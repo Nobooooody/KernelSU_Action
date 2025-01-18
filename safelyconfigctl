@@ -13,17 +13,24 @@ fi
 action=$1
 config_option=$2
 
+if [[ ! $config_option == CONFIG_* ]]; then
+    config_option_with_prefix="CONFIG_$config_option"
+else
+    config_option_with_prefix=$config_option
+    config_option=${config_option#CONFIG_}
+fi
+
 case $action in
     -e)
-        if grep -q "^$config_option=" "$support_config_file"; then
-            "$kernel_source_dir/scripts/config" --file "$target_config" -e "$config_option"
+        if grep -qE "^(CONFIG_)?$config_option=" "$support_config_file"; then
+            "$kernel_source_dir/scripts/config" --file "$target_config" -e "$config_option_with_prefix"
         else
-            echo "Error: $config_option is not supported."
+            echo "Error: $config_option or$config_option_with_prefix is not supported."
             exit 1
         fi
         ;;
     -d)
-        "$kernel_source_dir/scripts/config" --file "$target_config" -d "$config_option"
+        "$kernel_source_dir/scripts/config" --file "$target_config" -d "$config_option_with_prefix"
         ;;
     *)
         echo "Error: Invalid action. Use -e to enable or -d to disable a config option."
