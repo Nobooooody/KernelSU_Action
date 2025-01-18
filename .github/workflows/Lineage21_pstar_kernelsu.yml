@@ -209,6 +209,12 @@ jobs:
           echo "LOCALVERSION=" >> $GITHUB_ENV
         fi
 
+    - name: Set some env for safelyconfigctl
+      run: |
+        echo "kernel_source_dir=$GITHUB_WORKSPACE/kernel_workspace/android-kernel" >> $GITHUB_ENV
+        echo "target_config=$GITHUB_WORKSPACE/kernel_workspace/android-kernel/arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }}" >> $GITHUB_ENV
+        echo "support_config_file=$GITHUB_WORKSPACE/SupportedConfig_Lineage21_pstar" >> $GITHUB_ENV
+
     - name: Generate Kernel Build Config
       if: env.Generate_Build_Config == 'true'
       run: |
@@ -223,7 +229,7 @@ jobs:
         git clone https://gitlab.com/simonpunk/susfs4ksu.git # -b kernel-${{ env.Kernel_Version }} --depth=1
         (cd susfs4ksu && git checkout 5cdeec5fc1cc521c9499898a4d5fe91f1dc5749b)
 
-    - name: Import Docker Config
+    - name: Import Docker Config automately from git
       if: env.IMPORT_DOCKER == 'true'
       run: |
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
@@ -239,9 +245,10 @@ jobs:
         echo "source \"docker/Kconfig\"" >> arch/arm64/Kconfig
         git commit -a -m "Imported docker from https://github.com/lateautumn233/android_kernel_docker"
 
-    - name: Apply patches for docker and lxc
+    - name: Manually Apply custom patches for docker and lxc
       if: env.Docker_LXC_Patches == 'true'
       run: |
+        export PATH=$GITHUB_WORKSPACE:$PATH
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
         echo "------------ Patches for lxc and docker ----------------------------------------------------"
         patch -p1 < kernel_patches/patches/${{ env.Kernel_Extra_Version }}/cgroup.patch
@@ -250,60 +257,60 @@ jobs:
         echo "------------ Add Kernel Config required by lxc and docker ----------------------------------"
         # https://github.com/AndroidAppsUsedByMyself/android_kernel_motorola_sm8250/blob/backups/20240102-2249/0warning0error_lineage-20/arch/arm64/configs/vendor/lineageos_pstar_lxc_docker_defconfig
         echo "------------ Generally Necessary Docker Configs --------------------------------------------"
-        scripts/config --file arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }} \
-        -e CONFIG_CGROUP_SCHED \
-        -e CONFIG_RT_GROUP_SCHED \
-        -e CONFIG_CPUSETS \
-        -e CONFIG_BLK_CGROUP \
-        -e CONFIG_DEBUG_BLK_CGROUP \
-        -e CONFIG_MEMCG \
-        -e CONFIG_MEMCG_SWAP \
-        -e CONFIG_CGROUP_PIDS \
-        -e CONFIG_PID_NS \
-        -e CONFIG_IPC_NS \
-        -e CONFIG_CGROUP_DEVICE \
-        -e CONFIG_BRIDGE_NETFILTER \
-        -e CONFIG_NETFILTER_XT_MATCH_ADDRTYPE \
-        -e CONFIG_IP_VS \
-        -e CONFIG_NETFILTER_XT_MATCH_IPVS \
-        -e CONFIG_POSIX_MQUEUE
+        safelyconfigctl -e CONFIG_CGROUP_SCHED
+        safelyconfigctl -e CONFIG_RT_GROUP_SCHED
+        safelyconfigctl -e CONFIG_CPUSETS
+        safelyconfigctl -e CONFIG_BLK_CGROUP
+        safelyconfigctl -e CONFIG_DEBUG_BLK_CGROUP
+        safelyconfigctl -e CONFIG_MEMCG
+        safelyconfigctl -e CONFIG_MEMCG_SWAP
+        safelyconfigctl -e CONFIG_CGROUP_PIDS
+        safelyconfigctl -e CONFIG_PID_NS
+        safelyconfigctl -e CONFIG_IPC_NS
+        safelyconfigctl -e CONFIG_CGROUP_DEVICE
+        safelyconfigctl -e CONFIG_BRIDGE_NETFILTER
+        safelyconfigctl -e CONFIG_NETFILTER_XT_MATCH_ADDRTYPE
+        safelyconfigctl -e CONFIG_IP_VS
+        safelyconfigctl -e CONFIG_NETFILTER_XT_MATCH_IPVS
+        safelyconfigctl -e CONFIG_POSIX_MQUEUE
 
         echo "------------ Optional Features Docker Configs ----------------------------------------------"
-        scripts/config --file arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }} \
-        -e CONFIG_USER_NS \
-        -e CONFIG_CGROUP_PIDS \
-        -e CONFIG_BLK_DEV_THROTTLING \
-        -e CONFIG_CGROUP_PERF \
-        -e CONFIG_HUGETLB_PAGE \
-        -e CONFIG_CGROUP_HUGETLB \
-        -e CONFIG_NET_CLS_CGROUP \
-        -e CONFIG_CGROUP_NET_PRIO \
-        -e CONFIG_FAIR_GROUP_SCHED \
-        -e CONFIG_CFS_BANDWIDTH \
-        -e CONFIG_IP_VS_NFCT \
-        -e CONFIG_IP_VS_PROTO_TCP \
-        -e CONFIG_IP_VS_PROTO_UDP \
-        -e CONFIG_IP_VS_RR \
-        -e CONFIG_VXLAN \
-        -e CONFIG_MACVLAN \
-        -e CONFIG_BTRFS_FS \
-        -e CONFIG_BTRFS_FS_POSIX_ACL \
-        -e CONFIG_DM_THIN_PROVISIONING \
-        -e CONFIG_CGROUP_RDMA \
-        -e CONFIG_NF_NAT_IPV6 \
-        -e CONFIG_IP6_NF_NAT \
-        -e CONFIG_IP6_NF_TARGET_MASQUERADE \
-        -e CONFIG_NETFILTER_XT_TARGET_CHECKSUM \
-        -e CONFIG_CHECKPOINT_RESTORE \
-        -e CONFIG_FHANDLE \
-        -e CONFIG_UNIX_DIAG \
-        -e CONFIG_PACKET_DIAG \
-        -e CONFIG_NETLINK_DIAG
-        # CONFIG_VT will cause the apps which was granted root perm by kernelsu can not have access /dev/pts so I rather disable it
+        safelyconfigctl -e CONFIG_USER_NS
+        safelyconfigctl -e CONFIG_CGROUP_PIDS
+        safelyconfigctl -e CONFIG_BLK_DEV_THROTTLING
+        safelyconfigctl -e CONFIG_CGROUP_PERF
+        safelyconfigctl -e CONFIG_HUGETLB_PAGE
+        safelyconfigctl -e CONFIG_CGROUP_HUGETLB
+        safelyconfigctl -e CONFIG_NET_CLS_CGROUP
+        safelyconfigctl -e CONFIG_CGROUP_NET_PRIO
+        safelyconfigctl -e CONFIG_FAIR_GROUP_SCHED
+        safelyconfigctl -e CONFIG_CFS_BANDWIDTH
+        safelyconfigctl -e CONFIG_IP_VS_NFCT
+        safelyconfigctl -e CONFIG_IP_VS_PROTO_TCP
+        safelyconfigctl -e CONFIG_IP_VS_PROTO_UDP
+        safelyconfigctl -e CONFIG_IP_VS_RR
+        safelyconfigctl -e CONFIG_VXLAN
+        safelyconfigctl -e CONFIG_MACVLAN
+        safelyconfigctl -e CONFIG_BTRFS_FS
+        safelyconfigctl -e CONFIG_BTRFS_FS_POSIX_ACL
+        safelyconfigctl -e CONFIG_DM_THIN_PROVISIONING
+        safelyconfigctl -e CONFIG_CGROUP_RDMA
+        safelyconfigctl -e CONFIG_NF_NAT_IPV6
+        safelyconfigctl -e CONFIG_IP6_NF_NAT
+        safelyconfigctl -e CONFIG_IP6_NF_TARGET_MASQUERADE
+        safelyconfigctl -e CONFIG_NETFILTER_XT_TARGET_CHECKSUM
+        safelyconfigctl -e CONFIG_CHECKPOINT_RESTORE
+        safelyconfigctl -e CONFIG_FHANDLE
+        safelyconfigctl -e CONFIG_UNIX_DIAG
+        safelyconfigctl -e CONFIG_PACKET_DIAG
+        safelyconfigctl -e CONFIG_NETLINK_DIAG
+        safelyconfigctl -e CONFIG_VT
+        # CONFIG_VT may cause the apps which was granted root perm by kernelsu can not have access /dev/pts so I rather disable it
 
     - name: Apply patches for kali nethunter
       if: env.Add_Kali_Nethunter_Patches == 'true'
       run: |
+        export PATH=$GITHUB_WORKSPACE:$PATH
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
 
         echo "------------ Download Patches --------------------------------------------------------------"
@@ -315,144 +322,133 @@ jobs:
         echo "------------ Add Kernel Config required by Kali --------------------------------------------"
         # Configuring the Kernel - General (https://www.kali.org/docs/nethunter/nethunter-kernel-2-config-1)
         # General (ignore set “Default host name” to “kali”)
-        scripts/config --file arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }} \
-        -e CONFIG_SYSVIPC
+        safelyconfigctl -e CONFIG_SYSVIPC
 
         # Modules
-        scripts/config --file arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }} \
-        -e CONFIG_MODULES \
-        -e CONFIG_MODULE_UNLOAD \
-        -e CONFIG_MODULE_FORCE_UNLOAD \
-        -e CONFIG_MODVERSIONS
+        safelyconfigctl -e CONFIG_MODULES
+        safelyconfigctl -e CONFIG_MODULE_UNLOAD
+        safelyconfigctl -e CONFIG_MODULE_FORCE_UNLOAD
+        safelyconfigctl -e CONFIG_MODVERSIONS
 
         # Kernel Image
-        scripts/config --file arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }} \
-        -e CONFIG_BUILD_ARM64_APPENDED_DTB_IMAGE \
-        -e IMG_GZ_DTB
+        safelyconfigctl -e CONFIG_BUILD_ARM64_APPENDED_DTB_IMAGE
+        safelyconfigctl -e IMG_GZ_DTB
 
         # Configuring the Kernel - Network (https://www.kali.org/docs/nethunter/nethunter-kernel-3-config-2/)
         # Bluetooth
-        scripts/config --file arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }} \
-        -e CONFIG_BT_HCIBTUSB \
-        -e CONFIG_BT_HCIBTUSB_BCM \
-        -e CONFIG_BT_HCIBTUSB_RTL \
-        -e CONFIG_BT_HCIUART \
-        -e CONFIG_BT_HCIUART_H4 \
-        -e CONFIG_BT_HCIBCM203X \
-        -e CONFIG_BT_HCIBPA10X \
-        -e CONFIG_BT_HCIBFUSB \
-        -e CONFIG_BT_HCIVHCI
+        safelyconfigctl -e CONFIG_BT_HCIBTUSB
+        safelyconfigctl -e CONFIG_BT_HCIBTUSB_BCM
+        safelyconfigctl -e CONFIG_BT_HCIBTUSB_RTL
+        safelyconfigctl -e CONFIG_BT_HCIUART
+        safelyconfigctl -e CONFIG_BT_HCIUART_H4
+        safelyconfigctl -e CONFIG_BT_HCIBCM203X
+        safelyconfigctl -e CONFIG_BT_HCIBPA10X
+        safelyconfigctl -e CONFIG_BT_HCIBFUSB
+        safelyconfigctl -e CONFIG_BT_HCIVHCI
 
         # Android Binder IPC Driver
-        scripts/config --file arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }} \
-        -e CONFIG_ANDROID_BINDER_IPC
+        safelyconfigctl -e CONFIG_ANDROID_BINDER_IPC
 
         # MAC80211
-        #scripts/config --file arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }} \
-        #-e CONFIG_CFG80211_WEXT \
-        #-e CONFIG_MAC80211 \
-        #-e CONFIG_MAC80211_MESH
+        safelyconfigctl -e CONFIG_CFG80211_WEXT
+        safelyconfigctl -e CONFIG_MAC80211
+        safelyconfigctl -e CONFIG_MAC80211_MESH
 
         # Ethernet
-        scripts/config --file arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }} \
-        -e CONFIG_USB_RTL8150 \
-        -e CONFIG_USB_RTL8152
+        safelyconfigctl -e CONFIG_USB_RTL8150
+        safelyconfigctl -e CONFIG_USB_RTL8152
 
         # Configuring the Kernel - Wifi (https://www.kali.org/docs/nethunter/nethunter-kernel-4-config-3/)
         # Kernel Configuration cont.
         # Wireless LAN
-        #scripts/config --file arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }} \
-        #-e CONFIG_WLAN_VENDOR_ATH \
-        #-e CONFIG_ATH9K_HTC \
-        #-e CONFIG_CARL9170 \
-        #-e CONFIG_ATH6KL \
-        #-e CONFIG_ATH6KL_USB \
-        #-e CONFIG_WLAN_VENDOR_MEDIATEK \
-        #-e CONFIG_MT7601U \
-        #-e CONFIG_WLAN_VENDOR_RALINK \
-        #-e CONFIG_RT2X00 \
-        #-e CONFIG_RT2500USB \
-        #-e CONFIG_RT73USB \
-        #-e CONFIG_RT2800USB \
-        #-e CONFIG_RT2800USB_RT33XX \
-        #-e CONFIG_RT2800USB_RT35XX \
-        #-e CONFIG_RT2800USB_RT3573 \
-        #-e CONFIG_RT2800USB_RT53XX \
-        #-e CONFIG_RT2800USB_RT55XX \
-        #-e CONFIG_RT2800USB_UNKNOWN \
-        #-e CONFIG_WLAN_VENDOR_REALTEK \
-        #-e CONFIG_RTL8187 \
-        #-e CONFIG_RTL_CARDS \
-        #-e CONFIG_RTL8192CU \
-        #-e CONFIG_RTL8XXXU_UNTESTED \
-        #-e CONFIG_WLAN_VENDOR_ZYDAS \
-        #-e CONFIG_USB_ZD1201 \
-        #-e CONFIG_ZD1211RW \
-        #-e CONFIG_USB_NET_RNDIS_WLAN
+        safelyconfigctl -e CONFIG_WLAN_VENDOR_ATH
+        safelyconfigctl -e CONFIG_ATH9K_HTC
+        safelyconfigctl -e CONFIG_CARL9170
+        safelyconfigctl -e CONFIG_ATH6KL
+        safelyconfigctl -e CONFIG_ATH6KL_USB
+        safelyconfigctl -e CONFIG_WLAN_VENDOR_MEDIATEK
+        safelyconfigctl -e CONFIG_MT7601U
+        safelyconfigctl -e CONFIG_WLAN_VENDOR_RALINK
+        safelyconfigctl -e CONFIG_RT2X00
+        safelyconfigctl -e CONFIG_RT2500USB
+        safelyconfigctl -e CONFIG_RT73USB
+        safelyconfigctl -e CONFIG_RT2800USB
+        safelyconfigctl -e CONFIG_RT2800USB_RT33XX
+        safelyconfigctl -e CONFIG_RT2800USB_RT35XX
+        safelyconfigctl -e CONFIG_RT2800USB_RT3573
+        safelyconfigctl -e CONFIG_RT2800USB_RT53XX
+        safelyconfigctl -e CONFIG_RT2800USB_RT55XX
+        safelyconfigctl -e CONFIG_RT2800USB_UNKNOWN
+        safelyconfigctl -e CONFIG_WLAN_VENDOR_REALTEK
+        safelyconfigctl -e CONFIG_RTL8187
+        safelyconfigctl -e CONFIG_RTL_CARDS
+        safelyconfigctl -e CONFIG_RTL8192CU
+        safelyconfigctl -e CONFIG_RTL8XXXU_UNTESTED
+        safelyconfigctl -e CONFIG_WLAN_VENDOR_ZYDAS
+        safelyconfigctl -e CONFIG_USB_ZD1201
+        safelyconfigctl -e CONFIG_ZD1211RW
+        safelyconfigctl -e CONFIG_USB_NET_RNDIS_WLAN
 
         # Configuring the Kernel - SDR (https://www.kali.org/docs/nethunter/nethunter-kernel-5-config-4/)
         # Configuring the Kernel - SDR
         # Kernel Configuration
         # SDR
-        scripts/config --file arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }} \
-        -e CONFIG_MEDIA_DIGITAL_TV_SUPPORT \
-        -e CONFIG_MEDIA_SDR_SUPPORT \
-        -e CONFIG_USB_AIRSPY \
-        -e CONFIG_USB_HACKRF \
-        -e USB_MSI2500 \
-        -d CONFIG_MEDIA_SUBDRV_AUTOSELECT \
-        -e CONFIG_DVB_RTL2830 \
-        -e CONFIG_DVB_RTL2832 \
-        -e CONFIG_DVB_RTL2832_SDR \
-        -e CONFIG_DVB_SI2168 \
-        -e CONFIG_DVB_ZD1301_DEMOD
+        safelyconfigctl -e CONFIG_MEDIA_DIGITAL_TV_SUPPORT
+        safelyconfigctl -e CONFIG_MEDIA_SDR_SUPPORT
+        safelyconfigctl -e CONFIG_USB_AIRSPY
+        safelyconfigctl -e CONFIG_USB_HACKRF
+        safelyconfigctl -e USB_MSI2500
+        safelyconfigctl -d CONFIG_MEDIA_SUBDRV_AUTOSELECT
+        safelyconfigctl -e CONFIG_DVB_RTL2830
+        safelyconfigctl -e CONFIG_DVB_RTL2832
+        safelyconfigctl -e CONFIG_DVB_RTL2832_SDR
+        safelyconfigctl -e CONFIG_DVB_SI2168
+        safelyconfigctl -e CONFIG_DVB_ZD1301_DEMOD
 
         # Configuring the 4.x Kernel - USB (https://www.kali.org/docs/nethunter/nethunter-kernel-7-config-6/)
         # Configuring the 4.x Kernel - USB
         # Kernel Configuration cont.
         # USB Modem
-        scripts/config --file arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }} \
-        -e CONFIG_USB_ACM
+        safelyconfigctl -e CONFIG_USB_ACM
 
         # USB Gadget support
-        scripts/config --file arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }} \
-        -e CONFIG_USB_CONFIGFS_SERIAL \
-        -e CONFIG_USB_CONFIGFS_ACM \
-        -e CONFIG_USB_CONFIGFS_OBEX \
-        -e CONFIG_USB_CONFIGFS_NCM \
-        -e CONFIG_USB_CONFIGFS_ECM \
-        -e CONFIG_USB_CONFIGFS_ECM_SUBSET \
-        -e CONFIG_USB_CONFIGFS_RNDIS \
-        -e CONFIG_USB_CONFIGFS_EEM \
-        -e CONFIG_USB_CONFIGFS_MASS_STORAGE \
-        -e CONFIG_USB_CONFIGFS_F_HID
+        safelyconfigctl -e CONFIG_USB_CONFIGFS_SERIAL
+        safelyconfigctl -e CONFIG_USB_CONFIGFS_ACM
+        safelyconfigctl -e CONFIG_USB_CONFIGFS_OBEX
+        safelyconfigctl -e CONFIG_USB_CONFIGFS_NCM
+        safelyconfigctl -e CONFIG_USB_CONFIGFS_ECM
+        safelyconfigctl -e CONFIG_USB_CONFIGFS_ECM_SUBSET
+        safelyconfigctl -e CONFIG_USB_CONFIGFS_RNDIS
+        safelyconfigctl -e CONFIG_USB_CONFIGFS_EEM
+        safelyconfigctl -e CONFIG_USB_CONFIGFS_MASS_STORAGE
+        safelyconfigctl -e CONFIG_USB_CONFIGFS_F_HID
 
         # Configuring the Kernel - NFS (https://www.kali.org/docs/nethunter/nethunter-kernel-8-config-7/)
-        scripts/config --file arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }} \
-        -e CONFIG_NETWORK_FILESYSTEMS \
-        -e CONFIG_NFS_V2 \
-        -e CONFIG_NFS_V3 \
-        -e CONFIG_NFS_V4 \
-        -e CONFIG_NFSD \
-        -e CONFIG_NFSD_V3 \
-        -e CONFIG_NFSD_V4
+        safelyconfigctl -e CONFIG_NETWORK_FILESYSTEMS
+        safelyconfigctl -e CONFIG_NFS_V2
+        safelyconfigctl -e CONFIG_NFS_V3
+        safelyconfigctl -e CONFIG_NFS_V4
+        safelyconfigctl -e CONFIG_NFSD
+        safelyconfigctl -e CONFIG_NFSD_V3
+        safelyconfigctl -e CONFIG_NFSD_V4
 
 
     - name: Remove ANDROID_PARANOID_NETWORK
       if: env.Remove_ANDROID_PARANOID_NETWORK == 'true'
       run: |
+        export PATH=$GITHUB_WORKSPACE:$PATH
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
         echo "------------ Remove ANDROID_PARANOID_NETWORK -----------------------------------------------"
-        scripts/config --file arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }} -d ANDROID_PARANOID_NETWORK
+        safelyconfigctl -d ANDROID_PARANOID_NETWORK
 
     - name: Remove Kernel Validation
       if: env.Remove_Kernel_Validation == 'true'
       run: |
+        export PATH=$GITHUB_WORKSPACE:$PATH
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
         echo "------------ Patches for Remove Kernel Validation ------------------------------------------"
-        scripts/config --file arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }} \
-        -e CONFIG_MODULE_FORCE_LOAD \
-        -d CONFIG_MODULE_SIG_FORCE
+        safelyconfigctl -e CONFIG_MODULE_FORCE_LOAD
+        safelyconfigctl -d CONFIG_MODULE_SIG_FORCE
         patch -p1 < kernel_patches/patches/${{ env.Kernel_Extra_Version }}/module.patch
         #https://blog.xzr.moe/archives/236/
         #disable CONFIG_MODVERSIONS is useless
@@ -478,7 +474,6 @@ jobs:
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
         echo "------------ Patches for remove warning ----------------------------------------------------"
         patch -p1 < kernel_patches/patches/${{ env.Kernel_Extra_Version }}/nowarnings.patch
-        #scripts/config --file arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }} -d CONFIG_CC_WERROR -e CONFIG_SECTION_MISMATCH_WARN_ONLY --set-val CONFIG_FRAME_WARN 4096
 
     - name: Download source boot image
       if: env.BUILD_BOOT_IMG == 'true'
@@ -512,11 +507,11 @@ jobs:
     - name: Setup susfs4ksu workaround
       if: env.ENABLE_susfs4ksu == 'true' && env.APPLY_KSU_PATCH == 'true' && env.KERNELSU_LKM != 'true'
       run: |
+        export PATH=$GITHUB_WORKSPACE:$PATH
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel
-        scripts/config --file arch/${{ env.ARCH }}/configs/${{ env.KERNEL_CONFIG }} \
-        -d CONFIG_KSU_SUSFS_SUS_SU \
-        -e CONFIG_KSU_SUSFS \
-        -e CONFIG_KSU
+        safelyconfigctl -d CONFIG_KSU_SUSFS_SUS_SU
+        safelyconfigctl -e CONFIG_KSU_SUSFS
+        safelyconfigctl -e CONFIG_KSU
 
     - name: Setup Configuration for Kernel
       run: |
