@@ -228,7 +228,7 @@ jobs:
         echo "------------ Download Patches --------------------------------------------------------------"
         git clone https://github.com/AndroidAppsUsedByMyself/kernel_patches.git --depth=1
         git clone https://gitlab.com/simonpunk/susfs4ksu.git # -b kernel-${{ env.Kernel_Version }} --depth=1
-        (cd susfs4ksu && git checkout 5cdeec5fc1cc521c9499898a4d5fe91f1dc5749b)
+        (cd susfs4ksu && git checkout 2019ababed15bf6b971076922a50510962b9d3ca)
 
     - name: Import Docker Config automately from git
       if: env.IMPORT_DOCKER == 'true'
@@ -502,8 +502,8 @@ jobs:
         patch -p1 < $GITHUB_WORKSPACE/kernel_workspace/android-kernel/kernel_patches/patches/${{ env.Kernel_Extra_Version }}/50_add_susfs_in_kernel-${{ env.Kernel_Version }}.patch
         cd $GITHUB_WORKSPACE/kernel_workspace/android-kernel/KernelSU
         patch -p1 < $GITHUB_WORKSPACE/kernel_workspace/android-kernel/kernel_patches/patches/${{ env.Kernel_Extra_Version }}/10_enable_susfs_for_backslashxx_ksu.patch
-        cp $GITHUB_WORKSPACE/kernel_workspace/android-kernel/susfs4ksu/kernel_patches/fs/susfs.c $GITHUB_WORKSPACE/kernel_workspace/android-kernel/fs/
-        cp $GITHUB_WORKSPACE/kernel_workspace/android-kernel/susfs4ksu/kernel_patches/include/linux/susfs.h $GITHUB_WORKSPACE/kernel_workspace/android-kernel/include/linux/
+        cp $GITHUB_WORKSPACE/kernel_workspace/android-kernel/susfs4ksu/kernel_patches/fs/* $GITHUB_WORKSPACE/kernel_workspace/android-kernel/fs/
+        cp $GITHUB_WORKSPACE/kernel_workspace/android-kernel/susfs4ksu/kernel_patches/include/linux/* $GITHUB_WORKSPACE/kernel_workspace/android-kernel/include/linux/
 
     - name: Setup susfs4ksu workaround
       if: env.ENABLE_susfs4ksu == 'true' && env.APPLY_KSU_PATCH == 'true' && env.KERNELSU_LKM != 'true'
