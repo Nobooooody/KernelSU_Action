@@ -308,6 +308,16 @@ jobs:
         safelyconfigctl -e CONFIG_VT
         # CONFIG_VT may cause the apps which was granted root perm by kernelsu can not have access /dev/pts so I rather disable it
 
+        echo "------------ Generally Necessary Lindroid Configs --------------------------------------------"
+        safelyconfigctl -e CONFIG_SYSVIPC
+        safelyconfigctl -e CONFIG_UTS_NS
+        safelyconfigctl -e CONFIG_PID_NS
+        safelyconfigctl -e CONFIG_IPC_NS
+        safelyconfigctl -e CONFIG_USER_NS
+        safelyconfigctl -e CONFIG_NET_NS
+        safelyconfigctl -e CONFIG_CGROUP_DEVICE
+        safelyconfigctl -e CONFIG_CGROUP_FREEZER
+
     - name: Apply patches for kali nethunter
       if: env.Add_Kali_Nethunter_Patches == 'true'
       run: |
